@@ -1,31 +1,35 @@
 from django.shortcuts import render, redirect
 from django.conf import settings
 from django.core.files.storage import FileSystemStorage
-from .forms import DocumentForm, AppKeysForm
+from part_1.forms import DocumentForm, AppKeysForm
 import pandas as pd
-from .models import AppKeys
+from part_1.models import AppKeys
 import tweepy
 from twython import Twython
 
-# consumer_key = "at4Esg9twYr0uVm3JSZw3TTGA"
-# consumer_secret = "D4XmTaq1Z0v1WggioCmAO8bNwVnir56ZZq1moUTWwanHSzC4kT"
-# access_token = "760167659254190080-RrL0UoHrkD7QfnyWWosNasbyTYHUsK2"
-# access_token_secret = "2C8TVpS8D3vDW4BgN5NVoxJPxw2Ncf1l0mhMrsyfNKbgg"
 
-
-def get_followers_ids(user_id, consumer_key, consumer_secret, access_token, access_token_secret,api):
+def get_followers_ids(user_id, consumer_key, consumer_secret, access_token, access_token_secret, api):
     ids = []
     page_count = 0
-    for page in tweepy.Cursor(api.followers_ids, id=user_id, count=5000).pages():
+    for page in tweepy.Cursor(api.friends_ids, id=user_id, count=5000).pages():
         page_count += 1
         print ('Getting page {} for followers ids'.format(page_count))
-
         ids.extend(page)
-        print (ids)
-        if len(ids) > 200:
+        if len(ids) > 200 :
+            break
+        print ("0")
+        if len(ids) == 0:
+            break
+
+        if page_count > 3:
             break
 
     return ids[:200]
+
+
+
+
+
 
 def read_username(filename):
     username = []
@@ -35,7 +39,7 @@ def read_username(filename):
             username.append(line)
     return username
 
-def simple_upload(request):
+def simple_upload2(request):
     if request.method == 'POST' and request.FILES['myfile']:
         myfile = request.FILES['myfile']
         fs = FileSystemStorage()
@@ -71,7 +75,7 @@ def simple_upload(request):
         for username in usernames:
             if len(username) != 0:
                 print (username)
-                file_url.append(fs.url('media/document/'+username+'.txt'))
+                file_url.append(fs.url('media/document/'+username+ "_following" + ".txt"))
                 print('hi')
                 print(file_url)
                 print('bye')
@@ -81,19 +85,20 @@ def simple_upload(request):
                 userid = int(userid)
                 ids = get_followers_ids(userid, consumer_key, consumer_secret, access_token, access_token_secret,api)
                 list2=[]
-                file_to_write = 'media/document/'+username + ".txt"
+                file_to_write = 'media/document/'+ username + "_following" + ".txt"
                 print(file_to_write)
                 # list10.append(file_to_write)
-                with open (file_to_write, 'w') as f:
-                    for id in ids:
-                        try:
-                            id = api.get_user(id)
-                            id = id.screen_name
-                            list2.append(str(id))
-                            str_to_write = str(id) + "\n"
-                            f.write(str_to_write)
-                        except:
-                            pass
+                if len(ids)  > 0:
+                    with open (file_to_write, 'w') as f:
+                        for id in ids:
+                            try:
+                                id = api.get_user(id)
+                                id = id.screen_name
+                                list2.append(str(id))
+                                str_to_write = str(id) + "\n"
+                                f.write(str_to_write)
+                            except:
+                                pass
                 print ("Number of users found: " + str(len(ids)))
                 list1.append(list2)
         dictio = dict(zip(file_url, list1))
@@ -102,57 +107,7 @@ def simple_upload(request):
         # return render(request, 'part_1/index.html', {
         #     'uploaded_file_url': uploaded_file_url
         #     })
-        return render(request, 'part_1/followers.html', {
+        return render(request, 'part_5/followers.html', {
             'followers': dictio
             })
-    return render(request, 'part_1/index.html')
-
-# def handle_uploaded_file(f):
-#     with open('media/name.txt', 'wb+') as destination:
-#         for chunk in f.chunks():
-#             destination.write(chunk)
-
-
-def getKeys(request):
-    if request.method == 'POST':
-        print(request.POST)
-        app_keys_form = AppKeysForm(request.POST)
-        if app_keys_form.is_valid():
-            app_keys_form.save()
-            # return render(request, 'part_1/index.html')
-            return render(request, 'part_1/buttons.html')
-        else:
-            app_keys_form = AppKeysForm()
-            return render(request, 'part_1/twitter_form.html', {
-                'form': app_keys_form
-                })
-
-    elif request.method == 'GET':
-        app_keys_form = AppKeysForm()
-        return render(request, 'part_1/twitter_form.html', {
-            'form': app_keys_form
-            })
-
-
-
-
-
-
-
-
-
-
-
-
-
-# def model_form_upload(request):
-#     if request.method == 'POST':
-#         form = DocumentForm(request.POST, request.FILES)
-#         if form.is_valid():
-#             form.save()
-#             return redirect('display_followers.html')
-#     else:
-#         form = DocumentForm()
-#     return render(request, 'part_1/model_form_upload.html', {
-#         'form': form
-#     })
+    return render(request, 'part_5/index.html')

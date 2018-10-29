@@ -11,6 +11,8 @@ urlpatterns = [
     url(r'^message/', include('part_2.urls'), name = 'messages'),
     url(r'^requestfollow/', include('part_4.urls'), name = 'requestfollowing'),
     url(r'^messagefollower/', include('part_3.urls'), name = 'messagefollower'),
+    url(r'^messagefollowerfollow/', include('part_5.urls'), name = 'messagefollowerfollow'),
+
     url(r'^$', views.home, name = 'home'),
 ]
 

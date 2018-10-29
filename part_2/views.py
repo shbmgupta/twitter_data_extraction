@@ -55,12 +55,15 @@ def send_messages(list1, usernames, msg):
         print (username)
         try:
             if len(username) > 0:
-                output = twitter.lookup_user(screen_name=username)
-                userid =  output[0]["id_str"]
-                list1.append(username)
-                userid = int(userid)
-                send_direct_message(dest = userid, msg = msg)
-                print ("message sent")
+                try:
+                    output = twitter.lookup_user(screen_name=username)
+                    userid =  output[0]["id_str"]
+                    list1.append(username)
+                    userid = int(userid)
+                    send_direct_message(dest = userid, msg = msg)
+                    print ("message sent")
+                except:
+                    print ("message not sent for 1")    
             else:
                 continue
         except tweepy.TweepError as e:

@@ -52,12 +52,12 @@ def send_messages(list1, usernames, msg):
         print (username)
         try:
             if len(str(username)) > 0:
-                output = twitter.lookup_user(screen_name=username)
-                userid =  output[0]["id_str"]
-                list1.append(username)
-                userid = int(userid)
-                send_direct_message(dest = userid, msg = msg)
-                print ("message sent")
+                try:
+                    list1.append(username)
+                    send_direct_message(dest = userid, msg = msg)
+                    print ("message sent")
+                except:
+                    print ("message not sent for 1 user")
             else:
                 continue
         except tweepy.TweepError as e:
@@ -71,28 +71,31 @@ def comment_on_profile(list1, usernames, comment):
     twitter = Twython(consumer_key, consumer_secret, access_token, access_token_secret)
     for username in usernames:
         if len(str(username)) > 0:
-            list1.append(username)
-            print (username)
-            m = "@%s " %(username)
-            m = m + comment
-            s= api.update_status(m)
-            print('hi')
+            try:
+                list1.append(username)
+                print (username)
+                m = "@%s " %(username)
+                m = m + comment
+                s= api.update_status(m)
+                print('hi')
+            except:
+                pass
     return
 
 
 def get_followers_ids(user_id):
-
-    auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
-    auth.set_access_token(access_token, access_token_secret)
-    api = tweepy.API(auth, wait_on_rate_limit=True, wait_on_rate_limit_notify=True, retry_count=3, retry_delay=60)
     ids = []
     page_count = 0
     for page in tweepy.Cursor(api.followers_ids, id=user_id, count=5000).pages():
         page_count += 1
         print ('Getting page {} for followers ids'.format(page_count))
         ids.extend(page)
+        if len(ids) > 200:
+            break
+        if len(ids) == 0:
+            break
 
-    return ids
+    return ids[:200]
 
 
 def sendFollowerMessage(request):

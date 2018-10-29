@@ -53,7 +53,10 @@ def requestfollow(request):
             if len(username) != 0:
                 print (username)
                 twitter = Twython(consumer_key, consumer_secret, access_token, access_token_secret)
-                output = twitter.lookup_user(screen_name=username)
+                try:
+                    output = twitter.lookup_user(screen_name=username)
+                except:
+                    pass
                 userid =  output[0]["id_str"]
                 userid = int(userid)
                 try:
@@ -63,6 +66,7 @@ def requestfollow(request):
                     print (e)
                     list2.append(username)
                     pass
+
         return render(request, 'part_4/afterSend.html', {
         'requestC': list1,
         'requestNc': list2
