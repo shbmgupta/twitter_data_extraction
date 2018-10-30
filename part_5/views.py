@@ -79,28 +79,32 @@ def simple_upload2(request):
                 print('hi')
                 print(file_url)
                 print('bye')
-                twitter = Twython(consumer_key, consumer_secret, access_token, access_token_secret)
-                output = twitter.lookup_user(screen_name=username)
-                userid =  output[0]["id_str"]
-                userid = int(userid)
+                # twitter = Twython(consumer_key, consumer_secret, access_token, access_token_secret)
+                # output = twitter.lookup_user(screen_name=username)
+                # userid =  output[0]["id_str"]
+                # userid = int(userid)
+                name_of_user = api.get_user(int(username))
+                name_of_user = name_of_user.screen_name
+                print (name_of_user)
+                userid = int(username)
                 ids = get_followers_ids(userid, consumer_key, consumer_secret, access_token, access_token_secret,api)
                 list2=[]
                 file_to_write = 'media/document/'+ username + "_following" + ".txt"
                 print(file_to_write)
                 # list10.append(file_to_write)
-                if len(ids)  > 0:
-                    with open (file_to_write, 'w') as f:
-                        for id in ids:
-                            try:
-                                id = api.get_user(id)
-                                id = id.screen_name
-                                list2.append(str(id))
-                                str_to_write = str(id) + "\n"
-                                f.write(str_to_write)
-                            except:
-                                pass
-                print ("Number of users found: " + str(len(ids)))
-                list1.append(list2)
+                # if len(ids)  > 0:
+                with open (file_to_write, 'w') as f:
+                    for id in ids:
+                        try:
+                            # id = api.get_user(id)
+                            # id = id.screen_name
+                            list2.append(str(id))
+                            str_to_write = str(id) + "\n"
+                            f.write(str_to_write)
+                        except:
+                            pass
+            print ("Number of users found: " + str(len(ids)))
+            list1.append(list2)
         dictio = dict(zip(file_url, list1))
         print(dictio)
         #print(uploaded_file_url)

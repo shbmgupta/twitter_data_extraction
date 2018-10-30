@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <!-- {% load static %} -->
 <!DOCTYPE html>
 <html  data-wf-page="588650ddefcbe214061d3bfe" data-wf-site="5862ff0a48ddaea33e96e0ef">
@@ -54,50 +55,18 @@
 		</div>
 	</div>
 <center>
-    <div class="classes">
-			<h1>Submit the below form for sending a message:</h1>
-			<!-- http://localhost:8000/tweet/message/ -->
-  <form method="post" enctype="multipart/form-data" action="{% url 'part_2:sendMessage' %}">
-    {% csrf_token %}
-    <input type="file" name="myfile">
-    <textarea rows="4" cols="20" name="message" placeholder="Type your message"></textarea>
-    <!-- <button type="submit">Send Message</button> --><br><br>
-		<input type="submit" name="submit" value="Send Message">
-  </form>
+  <div class="classes">
+  <div class="comment">
+    {% if usernames %}
+    <h3>Reply has been sent to the following users: </h3>
+    <ul>
+      {% for users in usernames %}
+      <li>{{ users }}</li>
+      {% endfor %}
+    </ul>
+    {% endif %}
+  </div>
 </div>
-
-<div class="classes">
-	<h1>Submit the below form for sending a comment:</h1>
-	<!-- http://localhost:8000/tweet/message/comment/ -->
-	<form method="post" enctype="multipart/form-data" action="{% url 'part_2:commenting' %}">
-    {% csrf_token %}
-    <input type="file" name="myfile">
-    <textarea rows="4" cols="20" name="message" placeholder="Type your comment"></textarea><br><br>
-    <button type="submit">Send Comment</button>
-  </form>
-</div>
-
-<div class="classes">
-	<h1>Submit the below form if you want to comment on top 5 post:</h1>
-	<!-- http://localhost:8000/tweet/message/comment/ -->
-	<form method="post" enctype="multipart/form-data" action="{% url 'part_2:commenting_top_5' %}">
-    {% csrf_token %}
-    <input type="file" name="myfile">
-    <textarea rows="4" cols="20" name="message1" placeholder="Type your reply"></textarea><br><br>
-		<textarea rows="4" cols="20" name="message2" placeholder="Type your reply"></textarea><br><br>
-		<textarea rows="4" cols="20" name="message3" placeholder="Type your reply"></textarea><br><br>
-		<textarea rows="4" cols="20" name="message4" placeholder="Type your reply"></textarea><br><br>
-		<textarea rows="4" cols="20" name="message5" placeholder="Type your reply"></textarea><br><br>
-		<input type="text" name="sleep" value="5"><br><br>
-    <button type="submit">Send Comment</button>
-  </form>
-</div>
-
-  <!-- {% if uploaded_file_url %}
-    <p>File uploaded at: <a href="{{ form_upload }}">{{ uploaded_file_url }}</a></p>
-  {% endif %}
-<br><br><br>
-  <p><a href="{% url 'home' %}">Return to home</a></p> -->
 </center>
 	<script src="https://code.jquery.com/jquery-3.3.1.min.js" type="text/javascript" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 	<script src="https://daks2k3a4ib2z.cloudfront.net/5862ff0a48ddaea33e96e0ef/js/webflow.299fdfef2.js" type="text/javascript"></script>

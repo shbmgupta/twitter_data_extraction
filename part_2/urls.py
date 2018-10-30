@@ -5,5 +5,6 @@ app_name = 'part_2'
 
 urlpatterns = [
     url(r'^$', views.sendMessage, name = 'sendMessage'),
-    url(r'^comment/$', views.sendComment, name = 'commenting')
+    url(r'^comment/$', views.sendComment, name = 'commenting'),
+    url(r'^sendCommentTopFive/$', views.sendCommentTopFive, name = 'commenting_top_5')
 ]

@@ -21,11 +21,8 @@ def get_followers_ids(user_id, consumer_key, consumer_secret, access_token, acce
         print ('Getting page {} for followers ids'.format(page_count))
 
         ids.extend(page)
-        print (ids)
-        if len(ids) > 200:
-            break
 
-    return ids[:200]
+    return ids
 
 def read_username(filename):
     username = []
@@ -75,20 +72,24 @@ def simple_upload(request):
                 print('hi')
                 print(file_url)
                 print('bye')
-                twitter = Twython(consumer_key, consumer_secret, access_token, access_token_secret)
-                output = twitter.lookup_user(screen_name=username)
-                userid =  output[0]["id_str"]
-                userid = int(userid)
+                # twitter = Twython(consumer_key, consumer_secret, access_token, access_token_secret)
+                # output = twitter.lookup_user(screen_name=username)
+                # userid =  output[0]["id_str"]
+                # userid = int(userid)
+                name_of_user = api.get_user(int(username))
+                name_of_user = name_of_user.screen_name
+                print (name_of_user)
+                userid = int(username)
                 ids = get_followers_ids(userid, consumer_key, consumer_secret, access_token, access_token_secret,api)
                 list2=[]
                 file_to_write = 'media/document/'+username + ".txt"
-                print(file_to_write)
+                # print(file_to_write)
                 # list10.append(file_to_write)
                 with open (file_to_write, 'w') as f:
                     for id in ids:
                         try:
-                            id = api.get_user(id)
-                            id = id.screen_name
+                            # id = api.get_user(id)
+                            # id = id.screen_name
                             list2.append(str(id))
                             str_to_write = str(id) + "\n"
                             f.write(str_to_write)

@@ -12,6 +12,7 @@ import json
 import pprint
 from datetime import datetime
 from tweepy.parsers import RawParser
+import time
 
 appKeys = AppKeys.objects.all().order_by('-id')[0]
 consumer_key = appKeys.CustomerKey
@@ -56,14 +57,15 @@ def send_messages(list1, usernames, msg):
         try:
             if len(username) > 0:
                 try:
-                    output = twitter.lookup_user(screen_name=username)
-                    userid =  output[0]["id_str"]
+                    # output = twitter.lookup_user(screen_name=username)
+                    # userid =  output[0]["id_str"]
+                    userid = int(username)
                     list1.append(username)
-                    userid = int(userid)
+                    # userid = int(userid)
                     send_direct_message(dest = userid, msg = msg)
                     print ("message sent")
                 except:
-                    print ("message not sent for 1")    
+                    print ("message not sent for 1")
             else:
                 continue
         except tweepy.TweepError as e:
@@ -84,7 +86,20 @@ def comment_on_profile(list1, usernames, comment):
             s= api.update_status(m)
     return
 
+def reply_to_tweet(userid, count, messages):
+    tweet_ids = []
+    user = api.get_user(userid)
+    user_name = user.screen_name
+    user_name = str(user_name)
+    print (userid)
+    status_list = api.user_timeline(user_id = userid, count = count)
+    for status in status_list:
+        tweet_ids.append(status.id_str)
 
+    for i in range(len(tweet_ids)):
+        print (tweet_ids[i])
+        reply_status = "@%s %s" % (user_name, messages[i])
+        api.update_status(reply_status, tweet_ids[i])
 
 def sendMessage(request):
     if request.method == 'POST' and request.FILES['myfile']:
@@ -116,6 +131,29 @@ def sendComment(request):
         return render(request, 'part_2/sentComment.html', {
         'message': comment,
         'list1': list1
+        })
+    else:
+        return render(request, 'part_2/sendMessage.html')
+
+def sendCommentTopFive(request):
+    if request.method == 'POST' and request.FILES['myfile']:
+        myfile = request.FILES['myfile']
+        fs = FileSystemStorage()
+        filename = fs.save('media/document/'+ myfile.name, myfile)
+        usernames = read_username(filename)
+        list1 = []
+        reply1 = request.POST.get('message1')
+        reply2 = request.POST.get('message2')
+        reply3 = request.POST.get('message3')
+        reply4 = request.POST.get('message4')
+        reply5 = request.POST.get('message5')
+        sleep = request.POST.get('sleep')
+        reply_list = [reply1, reply2, reply3, reply4, reply5]
+        for username in usernames:
+            reply_to_tweet(username, 5, reply_list)
+            time.sleep(int(sleep))
+        return render(request, 'part_2/sentComment5.html', {
+        'usernames': usernames,
         })
     else:
         return render(request, 'part_2/sendMessage.html')

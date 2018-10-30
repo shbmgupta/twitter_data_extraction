@@ -51,14 +51,7 @@ def requestfollow(request):
         list2 = []
         for username in usernames:
             if len(username) != 0:
-                print (username)
-                twitter = Twython(consumer_key, consumer_secret, access_token, access_token_secret)
-                try:
-                    output = twitter.lookup_user(screen_name=username)
-                except:
-                    pass
-                userid =  output[0]["id_str"]
-                userid = int(userid)
+                userid =  int(username)
                 try:
                     api.create_friendship(userid)
                     list1.append(username)
